@@ -1,760 +1,428 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>LBA1 Grade Calculator</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0f1f3d;--navy-mid:#1a3260;--navy-light:#243d74;
+  --gold:#c9a84c;--gold-light:#e8c97a;
+  --cream:#faf8f4;--white:#ffffff;
+  --text:#0f1f3d;--text-muted:#5a6a8a;
+  --border:rgba(15,31,61,0.12);
+  --radius:12px;--radius-sm:8px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;padding-bottom:3rem}
 
-  :root {
-    --navy: #0f1f3d;
-    --navy-mid: #1a3260;
-    --navy-light: #243d74;
-    --gold: #c9a84c;
-    --gold-light: #e8c97a;
-    --gold-pale: #fdf6e3;
-    --cream: #faf8f4;
-    --white: #ffffff;
-    --text: #0f1f3d;
-    --text-muted: #5a6a8a;
-    --border: rgba(15,31,61,0.12);
-    --success: #1d6b47;
-    --success-bg: #e6f7ee;
-    --warning: #8a5e00;
-    --warning-bg: #fff8e1;
-    --danger: #9b2c2c;
-    --danger-bg: #fef2f2;
-    --radius: 12px;
-    --radius-sm: 8px;
-  }
+header{background:var(--navy);color:#fff;padding:2rem 1.5rem 1.75rem;text-align:center;position:relative;overflow:hidden}
+header::before{content:'';position:absolute;top:-50px;right:-50px;width:160px;height:160px;border:35px solid rgba(201,168,76,0.15);border-radius:50%}
+header::after{content:'';position:absolute;bottom:-35px;left:-35px;width:120px;height:120px;border:28px solid rgba(201,168,76,0.1);border-radius:50%}
+.header-badge{display:inline-block;background:rgba(201,168,76,0.2);color:var(--gold-light);font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:.75rem;border:1px solid rgba(201,168,76,0.3)}
+header h1{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;margin-bottom:.3rem}
+header p{color:rgba(255,255,255,0.55);font-size:.875rem;font-weight:300}
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--cream);
-    color: var(--text);
-    min-height: 100vh;
-    padding-bottom: 3rem;
-  }
+main{max-width:860px;margin:0 auto;padding:1.75rem 1rem 0}
 
-  /* HEADER */
-  header {
-    background: var(--navy);
-    color: #fff;
-    padding: 2.5rem 2rem 2rem;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  header::before {
-    content: '';
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 200px; height: 200px;
-    border: 40px solid rgba(201,168,76,0.15);
-    border-radius: 50%;
-  }
-  header::after {
-    content: '';
-    position: absolute;
-    bottom: -40px; left: -40px;
-    width: 140px; height: 140px;
-    border: 30px solid rgba(201,168,76,0.1);
-    border-radius: 50%;
-  }
-  .header-badge {
-    display: inline-block;
-    background: rgba(201,168,76,0.2);
-    color: var(--gold-light);
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 5px 14px;
-    border-radius: 20px;
-    margin-bottom: 1rem;
-    border: 1px solid rgba(201,168,76,0.3);
-  }
-  header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.2rem;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 0.4rem;
-  }
-  header p {
-    color: rgba(255,255,255,0.6);
-    font-size: 0.95rem;
-    font-weight: 300;
-  }
+.dashboard{display:grid;grid-template-columns:repeat(3,1fr);gap:.875rem;margin-bottom:1.5rem}
+.stat-card{background:var(--white);border-radius:var(--radius);padding:1.1rem 1.25rem;border:1px solid var(--border);text-align:center}
+.stat-card.featured{background:var(--navy);border-color:transparent;color:#fff}
+.stat-label{font-size:10px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:.4rem}
+.stat-card.featured .stat-label{color:rgba(255,255,255,0.5)}
+.stat-value{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;line-height:1;color:var(--text)}
+.stat-card.featured .stat-value{color:var(--gold-light);font-size:2.2rem}
+.stat-sub{font-size:11px;color:var(--text-muted);margin-top:3px}
+.stat-card.featured .stat-sub{color:rgba(255,255,255,0.4)}
+.mention-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;margin-top:.4rem;background:rgba(201,168,76,0.15);color:var(--gold);border:1px solid rgba(201,168,76,0.35);transition:all .3s}
 
-  /* MAIN LAYOUT */
-  main {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 2rem 1.25rem 0;
-  }
+.progress-wrap{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:1.1rem 1.25rem;margin-bottom:1.5rem}
+.progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem}
+.progress-title{font-size:12px;font-weight:500;color:var(--text-muted)}
+.progress-pct{font-size:12px;font-weight:500;color:var(--navy)}
+.progress-track{height:7px;background:#eef0f5;border-radius:4px;overflow:hidden}
+.progress-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--navy-light),var(--gold));width:0%;transition:width .5s cubic-bezier(.4,0,.2,1)}
 
-  /* SCORE DASHBOARD */
-  .dashboard {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-  .stat-card {
-    background: var(--white);
-    border-radius: var(--radius);
-    padding: 1.25rem 1.5rem;
-    border: 1px solid var(--border);
-    text-align: center;
-  }
-  .stat-card.featured {
-    background: var(--navy);
-    border-color: transparent;
-    color: #fff;
-  }
-  .stat-label {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 0.5rem;
-  }
-  .stat-card.featured .stat-label {
-    color: rgba(255,255,255,0.55);
-  }
-  .stat-value {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    font-weight: 700;
-    line-height: 1;
-    color: var(--text);
-    transition: color 0.4s;
-  }
-  .stat-card.featured .stat-value {
-    color: var(--gold-light);
-    font-size: 2.4rem;
-  }
-  .stat-sub {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 4px;
-  }
-  .stat-card.featured .stat-sub { color: rgba(255,255,255,0.45); }
+.hint{font-size:12px;color:var(--text-muted);background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.25);border-radius:var(--radius-sm);padding:.65rem 1rem;margin-bottom:1.4rem;line-height:1.6}
 
-  /* GRADE STATUS BADGE */
-  .mention-badge {
-    display: inline-block;
-    padding: 3px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-    margin-top: 0.5rem;
-    background: rgba(201,168,76,0.15);
-    color: var(--gold);
-    border: 1px solid rgba(201,168,76,0.35);
-    transition: all 0.3s;
-  }
+.section-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:600;color:var(--navy);margin-bottom:.65rem;padding-left:.65rem;border-left:3px solid var(--gold)}
 
-  /* PROGRESS BAR */
-  .progress-wrap {
-    background: var(--white);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 2rem;
-  }
-  .progress-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.75rem;
-  }
-  .progress-title {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-muted);
-    letter-spacing: 0.5px;
-  }
-  .progress-pct {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--navy);
-  }
-  .progress-track {
-    height: 8px;
-    background: #eef0f5;
-    border-radius: 4px;
-    overflow: hidden;
-  }
-  .progress-bar {
-    height: 100%;
-    border-radius: 4px;
-    background: linear-gradient(90deg, var(--navy-light), var(--gold));
-    width: 0%;
-    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
-  }
+.modules-grid{display:flex;flex-direction:column;gap:.875rem;margin-bottom:1.5rem}
+.module-card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden}
+.module-header{background:var(--navy);color:#fff;padding:.55rem 1.1rem;display:flex;align-items:center;justify-content:space-between}
+.module-name{font-size:11px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;opacity:.85}
+.module-avg-tag{font-size:13px;font-weight:500;color:var(--gold-light)}
 
-  /* SECTION TITLE */
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: var(--navy);
-    margin-bottom: 0.75rem;
-    padding-left: 0.75rem;
-    border-left: 3px solid var(--gold);
-  }
+.tbl-head{display:grid;grid-template-columns:1fr 46px 46px 88px 68px;padding:.4rem 1.1rem;background:#f4f5f9;border-bottom:1px solid var(--border)}
+.tbl-head span{font-size:10px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;color:var(--text-muted);text-align:center}
+.tbl-head span:first-child{text-align:left}
 
-  /* MODULE CARDS */
-  .modules-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-  .module-card {
-    background: var(--white);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    overflow: hidden;
-    transition: box-shadow 0.2s;
-  }
-  .module-card:hover {
-    box-shadow: 0 4px 20px rgba(15,31,61,0.08);
-  }
-  .module-header {
-    background: var(--navy);
-    color: #fff;
-    padding: 0.6rem 1.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .module-name {
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    opacity: 0.85;
-  }
-  .module-credits-badge {
-    font-size: 11px;
-    background: rgba(255,255,255,0.15);
-    padding: 2px 10px;
-    border-radius: 10px;
-    color: rgba(255,255,255,0.8);
-  }
+.course-row{display:grid;grid-template-columns:1fr 46px 46px 88px 68px;align-items:center;padding:.7rem 1.1rem;border-bottom:1px solid var(--border);transition:background .15s}
+.course-row:last-child{border-bottom:none}
+.course-row:hover{background:#fafbff}
+.course-label{font-size:13px;line-height:1.3}
+.meta{font-size:12px;color:var(--text-muted);text-align:center}
 
-  /* COURSE ROWS */
-  .course-row {
-    display: grid;
-    grid-template-columns: 1fr 120px 90px 80px 90px;
-    gap: 0;
-    align-items: center;
-    padding: 0.85rem 1.25rem;
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s;
-  }
-  .course-row:last-child { border-bottom: none; }
-  .course-row:hover { background: #fafbff; }
-  .course-label { font-size: 14px; font-weight: 400; }
-  .course-meta {
-    font-size: 12px;
-    color: var(--text-muted);
-    text-align: center;
-  }
-  .grade-input-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .grade-input {
-    width: 72px;
-    padding: 6px 10px;
-    font-size: 14px;
-    font-family: 'DM Sans', sans-serif;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    text-align: center;
-    color: var(--text);
-    background: #f8f9fc;
-    transition: border-color 0.2s, background 0.2s;
-    outline: none;
-  }
-  .grade-input:focus {
-    border-color: var(--navy-light);
-    background: #fff;
-  }
-  .grade-input.good  { border-color: #1d6b47; color: #1d6b47; background: #f0faf5; }
-  .grade-input.mid   { border-color: #b07a00; color: #8a5e00; background: #fffbf0; }
-  .grade-input.low   { border-color: #c0392b; color: #9b2c2c; background: #fff5f5; }
+.grade-wrap{display:flex;align-items:center;justify-content:center}
+/* KEY FIX: type=text + inputmode=decimal for mobile decimal support */
+.grade-input{
+  width:78px;padding:7px 6px;
+  font-size:15px;font-family:'DM Sans',sans-serif;
+  border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  text-align:center;color:var(--text);background:#f8f9fc;
+  transition:border-color .2s,background .2s;outline:none;
+}
+.grade-input:focus{border-color:var(--navy-light);background:#fff}
+.grade-input.good{border-color:#1d6b47;color:#1d6b47;background:#f0faf5}
+.grade-input.mid{border-color:#b07a00;color:#8a5e00;background:#fffbf0}
+.grade-input.low{border-color:#c0392b;color:#9b2c2c;background:#fff5f5}
+.grade-input.err{border-color:#e53e3e;animation:shake .3s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 
-  .course-weighted {
-    font-size: 13px;
-    color: var(--text-muted);
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-  }
-  .course-weighted.filled { color: var(--navy); font-weight: 500; }
+.weighted{font-size:12px;color:var(--text-muted);text-align:center;font-variant-numeric:tabular-nums}
+.weighted.on{color:var(--navy);font-weight:500}
 
-  /* HEADERS ROW */
-  .table-header {
-    display: grid;
-    grid-template-columns: 1fr 120px 90px 80px 90px;
-    gap: 0;
-    padding: 0.5rem 1.25rem;
-    background: #f4f5f9;
-    border-bottom: 1px solid var(--border);
-  }
-  .table-header span {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    text-align: center;
-  }
-  .table-header span:first-child { text-align: left; }
+.moy-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 1.1rem;background:#f9f8ff;border-top:1px solid var(--border)}
+.moy-label{font-size:11px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;color:var(--text-muted)}
+.moy-value{font-size:14px;font-weight:600;color:var(--navy);font-variant-numeric:tabular-nums}
+.moy-value.good{color:#1d6b47}.moy-value.mid{color:#b07a00}.moy-value.low{color:#c0392b}
 
-  /* ACTIONS */
-  .actions {
-    display: flex;
-    gap: 0.75rem;
-    margin-bottom: 2rem;
-  }
-  .btn {
-    padding: 0.7rem 1.5rem;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    border-radius: var(--radius-sm);
-    border: 1.5px solid transparent;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-primary {
-    background: var(--navy);
-    color: #fff;
-    border-color: var(--navy);
-  }
-  .btn-primary:hover { background: var(--navy-light); }
-  .btn-secondary {
-    background: transparent;
-    color: var(--text-muted);
-    border-color: var(--border);
-  }
-  .btn-secondary:hover { border-color: var(--navy); color: var(--navy); }
+.actions{display:flex;gap:.65rem;margin-bottom:1.75rem;flex-wrap:wrap}
+.btn{padding:.65rem 1.25rem;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;border-radius:var(--radius-sm);border:1.5px solid transparent;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.btn-primary:hover{background:var(--navy-light)}
+.btn-secondary{background:transparent;color:var(--text-muted);border-color:var(--border)}
+.btn-secondary:hover{border-color:var(--navy);color:var(--navy)}
 
-  /* RESULT BREAKDOWN */
-  .breakdown {
-    background: var(--white);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-  }
-  .breakdown-title {
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 1rem;
-  }
-  .breakdown-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.55rem 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 14px;
-  }
-  .breakdown-row:last-child { border-bottom: none; }
-  .breakdown-course { color: var(--text); }
-  .breakdown-score { font-weight: 500; color: var(--navy); font-variant-numeric: tabular-nums; }
-  .breakdown-score.pending { color: var(--text-muted); font-style: italic; font-weight: 400; }
+.breakdown{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:1.75rem}
+.bd-head{font-size:10px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);padding:.65rem 1.25rem;background:#f4f5f9;border-bottom:1px solid var(--border)}
+.bd-row{display:grid;grid-template-columns:1fr 90px 70px;padding:.6rem 1.25rem;border-bottom:1px solid var(--border);font-size:13px;align-items:center}
+.bd-row:last-child{border-bottom:none}
+.bd-row.total{background:#f9f8ff;font-weight:600;font-size:14px}
+.bd-num{text-align:center;font-variant-numeric:tabular-nums}
+.bd-num.pending{color:var(--text-muted);font-style:italic}
+.bd-num.good{color:#1d6b47}.bd-num.low{color:#c0392b}
 
-  /* SCALE LEGEND */
-  .scale {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-  }
-  .scale-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: var(--text-muted);
-    background: var(--white);
-    border: 1px solid var(--border);
-    padding: 4px 10px;
-    border-radius: 20px;
-  }
-  .scale-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-  }
+footer{text-align:center;font-size:11px;color:var(--text-muted);margin:1.5rem auto 0;padding:1rem 1rem 0;border-top:1px solid var(--border);max-width:860px;line-height:1.7}
 
-  /* FOOTER */
-  footer {
-    text-align: center;
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
-  }
-
-  @media (max-width: 640px) {
-    header h1 { font-size: 1.5rem; }
-    .dashboard { grid-template-columns: 1fr 1fr; }
-    .dashboard .stat-card.featured { grid-column: span 2; }
-    .course-row, .table-header {
-      grid-template-columns: 1fr 60px 70px 60px 70px;
-      padding: 0.7rem 0.75rem;
-      font-size: 12px;
-    }
-    .grade-input { width: 58px; font-size: 12px; }
-  }
+@media(max-width:480px){
+  header h1{font-size:1.45rem}
+  .dashboard{grid-template-columns:1fr 1fr}
+  .dashboard .stat-card.featured{grid-column:span 2}
+  .tbl-head,.course-row{grid-template-columns:1fr 36px 40px 80px 58px;padding:.6rem .75rem}
+  .grade-input{width:72px;font-size:14px}
+}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="header-badge">Academic Tools</div>
-  <h1>LBA1 Grade Calculator</h1>
-  <p>License in Business Administration &nbsp;·&nbsp; 1st Semester</p>
+  <div class="header-badge">ISB · LBA1</div>
+  <h1>Calculateur de Notes</h1>
+  <p>Licence Nationale en Gestion &nbsp;·&nbsp; 1er Semestre &nbsp;·&nbsp; Session Principale</p>
 </header>
 
 <main>
+<div style="height:1.5rem"></div>
 
-  <!-- DASHBOARD -->
-  <div style="height:1.75rem"></div>
-  <div class="dashboard">
-    <div class="stat-card featured">
-      <div class="stat-label">Overall Average</div>
-      <div class="stat-value" id="overall-avg">—</div>
-      <div class="mention-badge" id="mention-badge">Enter your grades</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Courses Filled</div>
-      <div class="stat-value" id="courses-filled">0<span style="font-size:1rem;opacity:.4">/8</span></div>
-      <div class="stat-sub">subjects entered</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Weighted Points</div>
-      <div class="stat-value" id="weighted-pts">—</div>
-      <div class="stat-sub">out of 15</div>
-    </div>
+<div class="dashboard">
+  <div class="stat-card featured">
+    <div class="stat-label">Moyenne Semestre</div>
+    <div class="stat-value" id="overall-avg">—</div>
+    <div class="mention-badge" id="mention-badge">Entrez vos notes</div>
   </div>
-
-  <!-- PROGRESS -->
-  <div class="progress-wrap">
-    <div class="progress-header">
-      <span class="progress-title">Completion</span>
-      <span class="progress-pct" id="progress-pct">0%</span>
-    </div>
-    <div class="progress-track">
-      <div class="progress-bar" id="progress-bar"></div>
-    </div>
+  <div class="stat-card">
+    <div class="stat-label">UE Complètes</div>
+    <div class="stat-value" id="ue-filled">0<span style="font-size:.85rem;opacity:.4">/6</span></div>
+    <div class="stat-sub">modules remplis</div>
   </div>
-
-  <!-- GRADE SCALE -->
-  <div class="scale">
-    <div class="scale-item"><div class="scale-dot" style="background:#1d6b47"></div> ≥ 14 — Distinction</div>
-    <div class="scale-item"><div class="scale-dot" style="background:#2e7d32"></div> ≥ 12 — Good</div>
-    <div class="scale-item"><div class="scale-dot" style="background:#b07a00"></div> ≥ 10 — Pass</div>
-    <div class="scale-item"><div class="scale-dot" style="background:#c0392b"></div> &lt; 10 — Fail</div>
+  <div class="stat-card">
+    <div class="stat-label">Crédits Cap.</div>
+    <div class="stat-value" id="credits-val">0<span style="font-size:.85rem;opacity:.4">/30</span></div>
+    <div class="stat-sub">Moy UE ≥ 10</div>
   </div>
+</div>
 
-  <!-- MODULES TABLE -->
-  <div class="section-title">Enter Your Grades (out of 20)</div>
-  <div class="modules-grid" id="modules-grid"></div>
-
-  <!-- ACTIONS -->
-  <div class="actions">
-    <button class="btn btn-primary" onclick="fillExample()">Fill Example Grades</button>
-    <button class="btn btn-secondary" onclick="resetAll()">Reset All</button>
+<div class="progress-wrap">
+  <div class="progress-header">
+    <span class="progress-title">Notes saisies</span>
+    <span class="progress-pct" id="prog-text">0 / 8</span>
   </div>
+  <div class="progress-track"><div class="progress-bar" id="prog-bar"></div></div>
+</div>
 
-  <!-- BREAKDOWN -->
-  <div class="section-title">Module Breakdown</div>
-  <div class="breakdown">
-    <div class="breakdown-title">Weighted contribution per module</div>
-    <div id="breakdown-rows"></div>
+<div class="hint">
+  ✦ &nbsp;Vous pouvez écrire <strong>13.5</strong> ou <strong>13,5</strong> — les deux formats sont acceptés.<br>
+  La formule suit le relevé officiel ISB : Moy UE calculée par ECUE → Moyenne semestrielle = moyenne des 6 Moy UE.
+</div>
+
+<div class="section-title">Notes par ECUE</div>
+<div class="modules-grid" id="modules-grid"></div>
+
+<div class="actions">
+  <button class="btn btn-primary" onclick="fillExample()">Exemple (relevé ISB)</button>
+  <button class="btn btn-secondary" onclick="resetAll()">Réinitialiser</button>
+</div>
+
+<div class="section-title">Récapitulatif par UE</div>
+<div class="breakdown">
+  <div class="bd-head">Unité d'Enseignement — Moy UE — Crédits</div>
+  <div class="bd-row" style="background:#f4f5f9;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted)">
+    <span>UE</span><span class="bd-num">Moy UE /20</span><span class="bd-num">Créd.</span>
   </div>
-
+  <div id="bd-body"></div>
+  <div class="bd-row total">
+    <span>Moyenne semestrielle</span>
+    <span class="bd-num" id="bd-avg">—</span>
+    <span class="bd-num">30</span>
+  </div>
+</div>
 </main>
 
 <footer>
-  Grades are evaluated using the Mixed System &nbsp;·&nbsp; Total: 30 credits | Coefficient sum: 15
+  Formule officielle ISB &nbsp;·&nbsp;
+  Moy UE = Σ(Note × Coef élément) ÷ Coef UE &nbsp;·&nbsp;
+  Moyenne = Σ(Moy UE × 2,5) ÷ 15
 </footer>
 
 <script>
-const MODULES = [
-  {
-    name: "Principles of Management",
-    courses: [
-      { id: "pm1", title: "Principles of Management 1", credits: 5, coeff: 2.5 }
-    ]
-  },
-  {
-    name: "Accounting",
-    courses: [
-      { id: "fa1", title: "Financial Accounting 1", credits: 5, coeff: 2.5 }
-    ]
-  },
-  {
-    name: "Principles of Economy",
-    courses: [
-      { id: "micro", title: "Microeconomics", credits: 5, coeff: 2.5 }
-    ]
-  },
-  {
-    name: "Mathematics",
-    courses: [
-      { id: "math1", title: "Mathematics 1", credits: 5, coeff: 2.5 }
-    ]
-  },
-  {
-    name: "Law and Financial Calculations",
-    totalCredits: 5,
-    courses: [
-      { id: "law1", title: "Introduction to Law", credits: 2, coeff: 1 },
-      { id: "finmath", title: "Financial Mathematics", credits: 3, coeff: 1.5 }
-    ]
-  },
-  {
-    name: "Language and Computer Science",
-    totalCredits: 5,
-    courses: [
-      { id: "eng1", title: "English", credits: 2, coeff: 1 },
-      { id: "cs1", title: "Computer Science I", credits: 3, coeff: 1.5 }
-    ]
-  }
+const MODULES=[
+  {id:'mgmt',name:'Principles of Management',credits:5,coef:2.5,
+    courses:[{id:'pm1',title:'Principles of Management 1',credits:5,coef:2.5}]},
+  {id:'acc',name:'Accounting',credits:5,coef:2.5,
+    courses:[{id:'fa1',title:'Financial Accounting 1',credits:5,coef:2.5}]},
+  {id:'eco',name:'Principles of Economy',credits:5,coef:2.5,
+    courses:[{id:'micro',title:'Microeconomics',credits:5,coef:2.5}]},
+  {id:'math',name:'Mathematics',credits:5,coef:2.5,
+    courses:[{id:'math1',title:'Mathematics 1',credits:5,coef:2.5}]},
+  {id:'law',name:'Law & Financial Calculations',credits:5,coef:2.5,
+    courses:[
+      {id:'law1',title:'Introduction to Law',credits:2,coef:1},
+      {id:'finmath',title:'Financial Mathematics',credits:3,coef:1.5}
+    ]},
+  {id:'lang',name:'Language & Computer Science',credits:5,coef:2.5,
+    courses:[
+      {id:'eng',title:'English',credits:2,coef:1},
+      {id:'cs1',title:'Computer Science I',credits:3,coef:1.5}
+    ]}
 ];
 
-const grades = {};
-const TOTAL_COURSES = MODULES.reduce((s, m) => s + m.courses.length, 0);
-const TOTAL_COEFF = 15;
+const grades={};
+const TOTAL_ECUE=MODULES.reduce((s,m)=>s+m.courses.length,0); // 8
 
-function buildUI() {
-  const grid = document.getElementById('modules-grid');
-  MODULES.forEach(mod => {
-    const card = document.createElement('div');
-    card.className = 'module-card';
+function parseGrade(raw){
+  if(!raw||raw.trim()==='') return null;
+  const v=parseFloat(String(raw).replace(',','.'));
+  if(isNaN(v)||v<0||v>20) return null;
+  return v;
+}
 
-    const totalCr = mod.totalCredits || mod.courses.reduce((s,c) => s+c.credits, 0);
-    card.innerHTML = `
+function colorClass(v){
+  if(v===null) return '';
+  return v>=14?'good':v>=10?'mid':'low';
+}
+
+/* BUILD UI */
+function buildUI(){
+  const grid=document.getElementById('modules-grid');
+  MODULES.forEach(mod=>{
+    const card=document.createElement('div');
+    card.className='module-card';
+    const totalCoef=mod.courses.reduce((s,c)=>s+c.coef,0);
+    card.innerHTML=`
       <div class="module-header">
         <span class="module-name">${mod.name}</span>
-        <span class="module-credits-badge">${totalCr} credits</span>
+        <span class="module-avg-tag" id="mh-${mod.id}">Moy UE : —</span>
       </div>
-      <div class="table-header">
-        <span>Course</span>
-        <span>Credits</span>
-        <span>Coefficient</span>
-        <span>Grade /20</span>
-        <span>Weighted</span>
+      <div class="tbl-head">
+        <span>ECUE</span><span>Cr.</span><span>Coef</span><span>Note /20</span><span>Pond.</span>
       </div>
     `;
-
-    mod.courses.forEach(course => {
-      const row = document.createElement('div');
-      row.className = 'course-row';
-      row.innerHTML = `
-        <div class="course-label">${course.title}</div>
-        <div class="course-meta">${course.credits}</div>
-        <div class="course-meta">${course.coeff}</div>
-        <div class="grade-input-wrap">
-          <input class="grade-input" type="number" min="0" max="20" step="0.25"
-            placeholder="—" id="inp-${course.id}" oninput="onGradeInput('${course.id}', this)" />
+    mod.courses.forEach(c=>{
+      const row=document.createElement('div');
+      row.className='course-row';
+      row.innerHTML=`
+        <div class="course-label">${c.title}</div>
+        <div class="meta">${c.credits}</div>
+        <div class="meta">${c.coef}</div>
+        <div class="grade-wrap">
+          <input class="grade-input" type="text" inputmode="decimal"
+            placeholder="—" autocomplete="off" id="inp-${c.id}"
+            oninput="handleInput('${c.id}','${mod.id}',this)"
+            onblur="handleBlur('${c.id}','${mod.id}',this)"/>
         </div>
-        <div class="course-weighted" id="wt-${course.id}">—</div>
+        <div class="weighted" id="wt-${c.id}">—</div>
       `;
       card.appendChild(row);
     });
-
+    const mr=document.createElement('div');
+    mr.className='moy-row';
+    mr.innerHTML=`
+      <span class="moy-label">Moy UE (coef ${totalCoef})</span>
+      <span class="moy-value" id="moy-${mod.id}">—</span>
+    `;
+    card.appendChild(mr);
     grid.appendChild(card);
   });
 
-  buildBreakdown();
-}
-
-function buildBreakdown() {
-  const wrap = document.getElementById('breakdown-rows');
-  wrap.innerHTML = '';
-  MODULES.forEach(mod => {
-    const row = document.createElement('div');
-    row.className = 'breakdown-row';
-    row.innerHTML = `
-      <span class="breakdown-course">${mod.name}</span>
-      <span class="breakdown-score pending" id="bd-${mod.courses[0].id}">—</span>
-    `;
-    wrap.appendChild(row);
+  /* build breakdown rows */
+  const body=document.getElementById('bd-body');
+  MODULES.forEach(mod=>{
+    const r=document.createElement('div');
+    r.className='bd-row';
+    r.innerHTML=`<span>${mod.name}</span>
+      <span class="bd-num pending" id="bd-${mod.id}">—</span>
+      <span class="bd-num">${mod.credits}</span>`;
+    body.appendChild(r);
   });
 }
 
-function onGradeInput(id, el) {
-  let val = parseFloat(el.value);
-  if (isNaN(val)) { val = null; }
-  else { val = Math.min(20, Math.max(0, val)); el.value = val; }
-  grades[id] = val;
-
-  el.className = 'grade-input';
-  if (val !== null) {
-    if (val >= 14) el.classList.add('good');
-    else if (val >= 10) el.classList.add('mid');
-    else el.classList.add('low');
-  }
-
-  updateWeighted(id);
-  recalculate();
+function handleInput(cid,mid,el){
+  const g=parseGrade(el.value);
+  grades[cid]=g;
+  refreshWeighted(cid,el,g);
+  refreshModule(mid);
+  refreshAll();
 }
 
-function updateWeighted(id) {
-  const course = findCourse(id);
-  const wtEl = document.getElementById('wt-' + id);
-  if (!course) return;
-  const g = grades[id];
-  if (g === null || g === undefined) {
-    wtEl.textContent = '—';
-    wtEl.className = 'course-weighted';
+function handleBlur(cid,mid,el){
+  const g=parseGrade(el.value);
+  grades[cid]=g;
+  if(el.value.trim()!==''&&g===null){
+    el.classList.add('err');
+    setTimeout(()=>el.classList.remove('err'),400);
+    el.value='';
+  } else if(g!==null){
+    /* normalise display: always use comma */
+    el.value=g.toFixed(2).replace('.',',');
+  }
+  refreshWeighted(cid,el,g);
+  refreshModule(mid);
+  refreshAll();
+}
+
+function refreshWeighted(cid,el,g){
+  const c=findCourse(cid);
+  const wt=document.getElementById('wt-'+cid);
+  el.classList.remove('good','mid','low','err');
+  if(g===null){wt.textContent='—';wt.className='weighted';}
+  else{
+    wt.textContent=(g*c.coef).toFixed(2);wt.className='weighted on';
+    el.classList.add(colorClass(g));
+  }
+}
+
+function getMoyUE(mod){
+  const totalCoef=mod.courses.reduce((s,c)=>s+c.coef,0);
+  let wSum=0,filled=0;
+  mod.courses.forEach(c=>{const g=grades[c.id];if(g!=null){wSum+=g*c.coef;filled++;}});
+  if(filled===0) return {moy:null,complete:false};
+  return {moy:wSum/totalCoef,complete:filled===mod.courses.length};
+}
+
+function refreshModule(mid){
+  const mod=MODULES.find(m=>m.id===mid);
+  const {moy,complete}=getMoyUE(mod);
+  const moyEl=document.getElementById('moy-'+mid);
+  const mhEl=document.getElementById('mh-'+mid);
+  const bdEl=document.getElementById('bd-'+mid);
+  if(moy===null){
+    moyEl.textContent='—';moyEl.className='moy-value';
+    mhEl.textContent='Moy UE : —';
+    bdEl.textContent='—';bdEl.className='bd-num pending';
   } else {
-    wtEl.textContent = (g * course.coeff).toFixed(2);
-    wtEl.className = 'course-weighted filled';
+    const s=moy.toFixed(2).replace('.',',');
+    moyEl.textContent=s+(complete?'':' *');
+    moyEl.className='moy-value '+colorClass(moy);
+    mhEl.textContent='Moy UE : '+s;
+    bdEl.textContent=s+(complete?'':' *');
+    bdEl.className='bd-num '+colorClass(moy);
   }
 }
 
-function findCourse(id) {
-  for (const mod of MODULES)
-    for (const c of mod.courses)
-      if (c.id === id) return c;
-  return null;
-}
-
-function recalculate() {
-  let totalWeighted = 0;
-  let totalCoeffUsed = 0;
-  let filled = 0;
-
-  MODULES.forEach(mod => {
-    let modWeighted = 0;
-    let modCoeffUsed = 0;
-    let modFilled = 0;
-
-    mod.courses.forEach(c => {
-      const g = grades[c.id];
-      if (g !== null && g !== undefined) {
-        totalWeighted += g * c.coeff;
-        totalCoeffUsed += c.coeff;
-        modWeighted += g * c.coeff;
-        modCoeffUsed += c.coeff;
-        modFilled++;
-        filled++;
-      }
-    });
-
-    const bdEl = document.getElementById('bd-' + mod.courses[0].id);
-    if (bdEl) {
-      const modTotalCoeff = mod.courses.reduce((s,c) => s + c.coeff, 0);
-      if (modFilled === mod.courses.length) {
-        const modAvg = modWeighted / modTotalCoeff;
-        bdEl.textContent = modAvg.toFixed(2) + ' / 20';
-        bdEl.className = 'breakdown-score';
-        bdEl.style.color = modAvg >= 10 ? '#1d6b47' : '#c0392b';
-      } else if (modFilled > 0) {
-        bdEl.textContent = 'Partial…';
-        bdEl.className = 'breakdown-score pending';
-        bdEl.style.color = '';
-      } else {
-        bdEl.textContent = '—';
-        bdEl.className = 'breakdown-score pending';
-        bdEl.style.color = '';
-      }
+function refreshAll(){
+  let moySum=0,ueFull=0,credCap=0,ecueFilled=0;
+  MODULES.forEach(mod=>{
+    const {moy,complete}=getMoyUE(mod);
+    mod.courses.forEach(c=>{if(grades[c.id]!=null) ecueFilled++;});
+    if(complete&&moy!==null){
+      moySum+=moy*mod.coef; // each coef=2.5
+      ueFull++;
+      if(moy>=10) credCap+=mod.credits;
     }
   });
 
-  const pct = Math.round((filled / TOTAL_COURSES) * 100);
-  document.getElementById('progress-bar').style.width = pct + '%';
-  document.getElementById('progress-pct').textContent = pct + '%';
-  document.getElementById('courses-filled').innerHTML =
-    filled + '<span style="font-size:1rem;opacity:.4">/' + TOTAL_COURSES + '</span>';
+  const pct=Math.round(ecueFilled/TOTAL_ECUE*100);
+  document.getElementById('prog-bar').style.width=pct+'%';
+  document.getElementById('prog-text').textContent=ecueFilled+' / '+TOTAL_ECUE;
+  document.getElementById('ue-filled').innerHTML=ueFull+'<span style="font-size:.85rem;opacity:.4">/6</span>';
+  document.getElementById('credits-val').innerHTML=credCap+'<span style="font-size:.85rem;opacity:.4">/30</span>';
 
-  if (filled === 0) {
-    document.getElementById('overall-avg').textContent = '—';
-    document.getElementById('weighted-pts').textContent = '—';
-    setMention('Enter your grades');
-    return;
-  }
+  const avgEl=document.getElementById('overall-avg');
+  const bdAvg=document.getElementById('bd-avg');
+  if(ueFull===0){avgEl.textContent='—';bdAvg.textContent='—';setMention('Entrez vos notes');return;}
 
-  const avg = totalWeighted / totalCoeffUsed;
-  document.getElementById('overall-avg').textContent = avg.toFixed(2);
-
-  const partialCoeffRatio = totalCoeffUsed / TOTAL_COEFF;
-  const projectedWeighted = totalCoeffUsed > 0 ? totalWeighted.toFixed(2) : '—';
-  document.getElementById('weighted-pts').textContent = projectedWeighted;
-
-  setMention(avg, filled === TOTAL_COURSES);
+  const COEF_TOTAL=15; // 6 × 2.5
+  const avg=moySum/COEF_TOTAL;
+  const s=avg.toFixed(2).replace('.',',');
+  avgEl.textContent=s;
+  bdAvg.textContent=s+(ueFull<6?' *':'');
+  setMention(avg,ueFull===6);
 }
 
-function setMention(avg, complete) {
-  const badge = document.getElementById('mention-badge');
-  if (typeof avg === 'string') {
-    badge.textContent = avg;
-    badge.style.background = 'rgba(201,168,76,0.15)';
-    badge.style.color = '#c9a84c';
-    badge.style.borderColor = 'rgba(201,168,76,0.35)';
-    return;
+function setMention(avg,complete){
+  const b=document.getElementById('mention-badge');
+  if(typeof avg==='string'){
+    b.textContent=avg;b.style.cssText='background:rgba(201,168,76,.15);color:#c9a84c;border-color:rgba(201,168,76,.35)';return;
   }
-  let label, bg, color, border;
-  if (avg >= 16)      { label = '✦ Très Bien'; bg='rgba(29,107,71,0.15)'; color='#1d6b47'; border='rgba(29,107,71,0.3)'; }
-  else if (avg >= 14) { label = '✦ Bien'; bg='rgba(29,107,71,0.1)'; color='#2e7d32'; border='rgba(46,125,50,0.3)'; }
-  else if (avg >= 12) { label = '◆ Assez Bien'; bg='rgba(55,138,221,0.1)'; color='#185fa5'; border='rgba(24,95,165,0.3)'; }
-  else if (avg >= 10) { label = '● Passable'; bg='rgba(186,117,23,0.12)'; color='#8a5e00'; border='rgba(138,94,0,0.3)'; }
-  else                { label = '✗ Ajourné'; bg='rgba(192,57,43,0.12)'; color='#9b2c2c'; border='rgba(155,44,44,0.3)'; }
-  if (!complete) label += ' (partial)';
-  badge.textContent = label;
-  badge.style.background = bg;
-  badge.style.color = color;
-  badge.style.borderColor = border;
+  let t,bg,col,bdr;
+  if(avg>=16){t='✦ Très Bien';bg='rgba(29,107,71,.15)';col='#1d6b47';bdr='rgba(29,107,71,.3)'}
+  else if(avg>=14){t='✦ Bien';bg='rgba(46,125,50,.1)';col='#2e7d32';bdr='rgba(46,125,50,.3)'}
+  else if(avg>=12){t='◆ Assez Bien';bg='rgba(24,95,165,.1)';col='#185fa5';bdr='rgba(24,95,165,.3)'}
+  else if(avg>=10){t='● Passable';bg='rgba(138,94,0,.1)';col='#8a5e00';bdr='rgba(138,94,0,.3)'}
+  else{t='✗ Ajourné';bg='rgba(155,44,44,.12)';col='#9b2c2c';bdr='rgba(155,44,44,.3)'}
+  if(!complete) t+=' (partiel)';
+  b.textContent=t;
+  b.style.background=bg;b.style.color=col;b.style.borderColor=bdr;
 }
 
-function fillExample() {
-  const examples = {
-    pm1: 13, fa1: 15, micro: 11, math1: 14,
-    law1: 12, finmath: 10, eng1: 16, cs1: 13
-  };
-  Object.entries(examples).forEach(([id, val]) => {
-    const el = document.getElementById('inp-' + id);
-    if (el) { el.value = val; onGradeInput(id, el); }
+function findCourse(cid){
+  for(const m of MODULES) for(const c of m.courses) if(c.id===cid) return c;
+}
+
+/* Mariem Toumi S1 — from the ISB transcript */
+function fillExample(){
+  const ex={pm1:17.02,fa1:16.64,micro:15.48,math1:13.26,law1:14.06,finmath:11.38,eng:16.32,cs1:6};
+  Object.entries(ex).forEach(([id,val])=>{
+    grades[id]=val;
+    const el=document.getElementById('inp-'+id);
+    if(el) el.value=val.toFixed(2).replace('.',',');
   });
+  MODULES.forEach(m=>{
+    m.courses.forEach(c=>{
+      const el=document.getElementById('inp-'+c.id);
+      if(el) refreshWeighted(c.id,el,grades[c.id]);
+    });
+    refreshModule(m.id);
+  });
+  refreshAll();
 }
 
-function resetAll() {
-  MODULES.forEach(mod => mod.courses.forEach(c => {
-    grades[c.id] = null;
-    const el = document.getElementById('inp-' + c.id);
-    if (el) { el.value = ''; el.className = 'grade-input'; }
-    const wt = document.getElementById('wt-' + c.id);
-    if (wt) { wt.textContent = '—'; wt.className = 'course-weighted'; }
+function resetAll(){
+  MODULES.forEach(mod=>mod.courses.forEach(c=>{
+    grades[c.id]=null;
+    const el=document.getElementById('inp-'+c.id);
+    if(el){el.value='';el.className='grade-input';}
+    const wt=document.getElementById('wt-'+c.id);
+    if(wt){wt.textContent='—';wt.className='weighted';}
   }));
-  recalculate();
+  MODULES.forEach(m=>refreshModule(m.id));
+  refreshAll();
 }
 
 buildUI();
-recalculate();
+refreshAll();
 </script>
 </body>
 </html>
